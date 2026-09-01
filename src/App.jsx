@@ -102,7 +102,7 @@ function WindStrings({ count = 30 }) {
   )
 }
 
-function Lotuses({ count = 25 }) {
+function Lotuses({ count = 8 }) {
   const { scene } = useGLTF('./models/lotus.glb')
   
   const positions = useMemo(() => {
@@ -132,7 +132,7 @@ function Lotuses({ count = 25 }) {
   )
 }
 
-function Lanterns({ count = 15 }) {
+function Lanterns({ count = 5 }) {
   const lat1 = useGLTF('./models/latern1.glb')
   const lat2 = useGLTF('./models/latern2.glb')
   const lat3 = useGLTF('./models/latern3.glb')
@@ -276,7 +276,7 @@ function CameraRig() {
   return null
 }
 
-function Scene() {
+function Scene({ isMobile }) {
   const { scene } = useGLTF('./models/yellow_tree.glb')
   
   useEffect(() => {
@@ -324,18 +324,18 @@ function Scene() {
       <Petals count={200} />
       <WindStrings count={30} />
 
-      <Ocean />
+      <CameraRig />
+      
+      {!isMobile && (
+        <EffectComposer disableNormalPass>
+          <Bloom luminanceThreshold={1} mipmapBlur intensity={1.5} />
+          <BrightnessContrast brightness={0} contrast={0.1} />
+          <HueSaturation hue={0} saturation={0.2} />
+          <Vignette eskil={false} offset={0.1} darkness={1.1} />
+        </EffectComposer>
+      )}
 
-      <EffectComposer disableNormalPass multisampling={4}>
-        <Bloom 
-          luminanceThreshold={0.5} 
-          mipmapBlur 
-          intensity={1.0} 
-        />
-        <HueSaturation saturation={0.3} hue={0} />
-        <BrightnessContrast brightness={0.05} contrast={0.2} />
-        <Vignette eskil={false} offset={0.1} darkness={1.1} />
-      </EffectComposer>
+      <Ocean />
     </>
   )
 }
@@ -421,15 +421,24 @@ function CustomLoader() {
 }
 
 export default function App() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#050505' }}>
       <Canvas 
-        shadows 
+        shadows={!isMobile} 
+        dpr={isMobile ? [1, 1] : [1, 1.5]}
         camera={{ position: [20, 0.5, 2.66], fov: 45 }}
       >
         <fog attach="fog" args={['#050505', 10, 50]} />
         <Suspense fallback={null}>
-          <Scene />
+          <Scene isMobile={isMobile} />
         </Suspense>
       </Canvas>
       <CustomLoader />
