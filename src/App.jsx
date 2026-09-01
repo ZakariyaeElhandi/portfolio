@@ -341,14 +341,17 @@ function Scene() {
 }
 
 function CustomLoader() {
-  const { progress } = useProgress()
+  const { active, progress, total } = useProgress()
   const [status, setStatus] = useState('loading') // loading, ready, fading, hidden
 
   useEffect(() => {
-    if (progress === 100 && status === 'loading') {
+    // Only transition to ready if we have actually registered items to load (total > 0),
+    // they are completely finished (progress === 100), and the loading manager is no longer active.
+    // This prevents the "CLICK TO ENTER" text from appearing prematurely on the very first frame.
+    if (!active && progress === 100 && total > 0 && status === 'loading') {
       setStatus('ready')
     }
-  }, [progress, status])
+  }, [active, progress, total, status])
 
   const fireflies = useMemo(() => {
     return Array.from({ length: 40 }, () => ({
