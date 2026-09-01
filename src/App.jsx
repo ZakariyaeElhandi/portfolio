@@ -103,7 +103,7 @@ function WindStrings({ count = 30 }) {
 }
 
 function Lotuses({ count = 25 }) {
-  const { scene } = useGLTF('/models/lotus.glb')
+  const { scene } = useGLTF('./models/lotus.glb')
   
   const positions = useMemo(() => {
     return Array.from({ length: count }, () => {
@@ -133,9 +133,9 @@ function Lotuses({ count = 25 }) {
 }
 
 function Lanterns({ count = 15 }) {
-  const lat1 = useGLTF('/models/latern1.glb')
-  const lat2 = useGLTF('/models/latern2.glb')
-  const lat3 = useGLTF('/models/latern3.glb')
+  const lat1 = useGLTF('./models/latern1.glb')
+  const lat2 = useGLTF('./models/latern2.glb')
+  const lat3 = useGLTF('./models/latern3.glb')
   const models = [lat1.scene, lat2.scene, lat3.scene]
   
   const group = useRef()
@@ -277,7 +277,7 @@ function CameraRig() {
 }
 
 function Scene() {
-  const { scene } = useGLTF('/models/yellow_tree.glb')
+  const { scene } = useGLTF('./models/yellow_tree.glb')
   
   useEffect(() => {
     scene.traverse((child) => {
@@ -405,7 +405,7 @@ function CustomLoader() {
           />
         </svg>
         <img 
-          src="/goldenleaf.png" 
+          src="./goldenleaf.png" 
           alt="Golden Leaf" 
           className={`golden-leaf ${status === 'ready' || status === 'fading' ? 'glow' : ''}`}
         />
