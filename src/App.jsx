@@ -327,10 +327,10 @@ function Scene({ isMobile }) {
       <CameraRig />
       
       {!isMobile && (
-        <EffectComposer disableNormalPass>
-          <Bloom luminanceThreshold={1} mipmapBlur intensity={1.5} />
-          <BrightnessContrast brightness={0} contrast={0.1} />
-          <HueSaturation hue={0} saturation={0.2} />
+        <EffectComposer disableNormalPass multisampling={4}>
+          <Bloom luminanceThreshold={0.5} mipmapBlur intensity={1.0} />
+          <HueSaturation saturation={0.3} hue={0} />
+          <BrightnessContrast brightness={0.05} contrast={0.2} />
           <Vignette eskil={false} offset={0.1} darkness={1.1} />
         </EffectComposer>
       )}
@@ -343,6 +343,13 @@ function Scene({ isMobile }) {
 function CustomLoader() {
   const { active, progress, total } = useProgress()
   const [status, setStatus] = useState('loading') // loading, ready, fading, hidden
+  const [displayProgress, setDisplayProgress] = useState(0)
+
+  useEffect(() => {
+    if (progress > displayProgress) {
+      setDisplayProgress(progress)
+    }
+  }, [progress, displayProgress])
 
   useEffect(() => {
     // Only transition to ready if we have actually registered items to load (total > 0),
@@ -367,7 +374,7 @@ function CustomLoader() {
   const radius = 70;
   const circumference = 2 * Math.PI * radius;
   // Fallback to empty if progress is undefined
-  const offset = circumference - ((progress || 0) / 100) * circumference;
+  const offset = circumference - ((displayProgress || 0) / 100) * circumference;
 
   return (
     <div className={`loader-container ${status === 'fading' ? 'fog-fade' : ''}`}>
@@ -436,6 +443,7 @@ export default function App() {
         dpr={isMobile ? [1, 1] : [1, 1.5]}
         camera={{ position: [20, 0.5, 2.66], fov: 45 }}
       >
+        <color attach="background" args={['#050505']} />
         <fog attach="fog" args={['#050505', 10, 50]} />
         <Suspense fallback={null}>
           <Scene isMobile={isMobile} />
