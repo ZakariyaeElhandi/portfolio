@@ -71,25 +71,36 @@ body {
   stroke-dashoffset: 440;
 }
 
-.click-text {
+.click-text-wrapper {
   position: absolute;
-  bottom: 50px;
-  font-size: 14px;
-  letter-spacing: 4px;
+  bottom: 12%;
+  left: 50%;
+  transform: translateX(-50%);
   opacity: 0;
-  transition: opacity 1.5s ease-in-out;
-  margin-top: 0;
+  transition: opacity 2s ease-in-out;
+  pointer-events: none;
 }
 
-.click-text.visible {
+.click-text-wrapper.visible {
   opacity: 1;
-  animation: pulseText 1.5s ease-in-out infinite;
 }
 
-@keyframes pulseText {
-  0% { opacity: 0.2; transform: scale(0.95); }
-  50% { opacity: 1; transform: scale(1.05); text-shadow: 0 0 10px #ffcc00; }
-  100% { opacity: 0.2; transform: scale(0.95); }
+.click-text {
+  font-size: 14px;
+  letter-spacing: 6px;
+  color: #ffcc00;
+  animation: pulseBeat 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulseBeat {
+  0%, 100% { 
+    opacity: 1; 
+    text-shadow: 0 0 15px rgba(255, 204, 0, 0.8); 
+  }
+  50% { 
+    opacity: 0.3; 
+    text-shadow: 0 0 2px rgba(255, 204, 0, 0.1); 
+  }
 }
 
 @property --fog-radius {

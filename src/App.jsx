@@ -410,8 +410,8 @@ function CustomLoader() {
           className={`golden-leaf ${status === 'ready' || status === 'fading' ? 'glow' : ''}`}
         />
       </div>
-      <div className={`click-text ${status === 'ready' || status === 'fading' ? 'visible' : ''}`}>
-        CLICK TO ENTER
+      <div className={`click-text-wrapper ${status === 'ready' || status === 'fading' ? 'visible' : ''}`}>
+        <div className="click-text">CLICK TO ENTER</div>
       </div>
     </div>
   )
