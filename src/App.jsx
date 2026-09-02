@@ -260,7 +260,8 @@ function InteractiveScrollIsland({ children }) {
     const r = scroll.range(0, 0.15) 
     
     // Smoothly scale down and DROWN into the water (Y drops to -5)
-    group.current.scale.setScalar(THREE.MathUtils.lerp(10, 5, r))
+    // The group starts at scale 1 (since internal elements have their own base scales) and shrinks to 0.5
+    group.current.scale.setScalar(THREE.MathUtils.lerp(1, 0.5, r))
     group.current.position.y = THREE.MathUtils.lerp(0, -5, r)
     group.current.position.z = THREE.MathUtils.lerp(0, -5, r)
     group.current.rotation.x = THREE.MathUtils.lerp(0, 0.15, r)
@@ -431,7 +432,7 @@ function Scene({ isMobile }) {
     <>
       {/* We wrap the island, lotuses, and lanterns in the InteractiveScrollIsland so they sink into water and can be dragged */}
       <InteractiveScrollIsland>
-        <primitive object={scene} />
+        <primitive object={scene} scale={10} />
         <Lotuses count={25} />
         <Lanterns count={15} />
       </InteractiveScrollIsland>
