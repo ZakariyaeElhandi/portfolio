@@ -214,12 +214,11 @@ function Ocean() {
   return <water ref={ref} args={[geom, config]} rotation-x={-Math.PI / 2} position={[0, -0.45, 0]} />
 }
 
-function InteractiveScrollIsland({ children }) {
+function InteractiveGroup({ children }) {
   const group = useRef()
   const scroll = useScroll()
   const { gl } = useThree()
   
-  // Drag state
   const rotationY = useRef(0)
   
   useEffect(() => {
@@ -259,16 +258,26 @@ function InteractiveScrollIsland({ children }) {
     if (!group.current) return
     const r = scroll.range(0, 0.15) 
     
-    // Smoothly scale down and DROWN into the water (Y drops to -5)
-    // The group starts at scale 1 (since internal elements have their own base scales) and shrinks to 0.5
+    const scrollRotY = THREE.MathUtils.lerp(0, Math.PI * 0.1, r)
+    group.current.rotation.y = scrollRotY + rotationY.current
+  })
+
+  return <group ref={group}>{children}</group>
+}
+
+function ScrollIsland({ children }) {
+  const group = useRef()
+  const scroll = useScroll()
+
+  useFrame(() => {
+    if (!group.current) return
+    const r = scroll.range(0, 0.15) 
+    
+    // Only the island sinks, shrinks, and tilts
     group.current.scale.setScalar(THREE.MathUtils.lerp(1, 0.5, r))
     group.current.position.y = THREE.MathUtils.lerp(0, -5, r)
     group.current.position.z = THREE.MathUtils.lerp(0, -5, r)
     group.current.rotation.x = THREE.MathUtils.lerp(0, 0.15, r)
-    
-    // Combine scroll rotation and interactive drag rotation
-    const scrollRotY = THREE.MathUtils.lerp(0, Math.PI * 0.1, r)
-    group.current.rotation.y = scrollRotY + rotationY.current
   })
 
   return <group ref={group}>{children}</group>
@@ -329,12 +338,14 @@ function Scene({ isMobile }) {
   
   return (
     <>
-      {/* We wrap the island, lotuses, and lanterns in the InteractiveScrollIsland so they sink into water and can be dragged */}
-      <InteractiveScrollIsland>
-        <primitive object={scene} scale={10} />
+      {/* We separate the drag interaction from the sinking animation so lotuses and lanterns don't sink */}
+      <InteractiveGroup>
+        <ScrollIsland>
+          <primitive object={scene} scale={10} />
+        </ScrollIsland>
         <Lotuses count={25} />
         <Lanterns count={15} />
-      </InteractiveScrollIsland>
+      </InteractiveGroup>
 
       <HTMLPortfolio />
 
