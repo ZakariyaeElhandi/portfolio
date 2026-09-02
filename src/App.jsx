@@ -228,11 +228,11 @@ function InteractiveGroup({ children }) {
     const onPointerDown = (e) => {
       isDragging = true
       previousX = e.clientX
-      gl.domElement.style.cursor = 'grabbing'
+      document.body.style.cursor = 'grabbing'
     }
     const onPointerUp = () => {
       isDragging = false
-      gl.domElement.style.cursor = 'grab'
+      document.body.style.cursor = 'grab'
     }
     const onPointerMove = (e) => {
       if (isDragging) {
@@ -242,17 +242,17 @@ function InteractiveGroup({ children }) {
       }
     }
     
-    gl.domElement.style.cursor = 'grab'
-    gl.domElement.addEventListener('pointerdown', onPointerDown)
+    document.body.style.cursor = 'grab'
+    window.addEventListener('pointerdown', onPointerDown)
     window.addEventListener('pointerup', onPointerUp)
     window.addEventListener('pointermove', onPointerMove)
     
     return () => {
-      gl.domElement.removeEventListener('pointerdown', onPointerDown)
+      window.removeEventListener('pointerdown', onPointerDown)
       window.removeEventListener('pointerup', onPointerUp)
       window.removeEventListener('pointermove', onPointerMove)
     }
-  }, [gl])
+  }, [])
 
   useFrame(() => {
     if (!group.current) return
