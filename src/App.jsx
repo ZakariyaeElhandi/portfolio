@@ -286,15 +286,26 @@ function ScrollIsland({ children }) {
 
 
 function HTMLPortfolio() {
+  const scroll = useScroll()
+  const indicatorRef = useRef()
+
+  useFrame(() => {
+    if (indicatorRef.current) {
+      // Fade out from 1 to 0 between 0% and 25% of scroll
+      const opacity = 1 - scroll.range(0, 0.25)
+      indicatorRef.current.style.opacity = opacity
+    }
+  })
+
   return (
-    <Scroll html style={{ width: '100vw', height: '200vh' }}>
+    <Scroll html style={{ width: '100vw', height: '200vh', pointerEvents: 'none' }}>
       {/* Page 1: Empty to show the 3D Island */}
       <section className="scroll-section hero-section" style={{ height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', paddingTop: '5vh' }}>
-        <div className="hero-content top-left" style={{ opacity: 0.6 }}>
+        <div className="hero-content top-left" style={{ opacity: 0.6, userSelect: 'none' }}>
           <h1 className="hero-name">ZAKARIYAE EL HANDI</h1>
           <p className="hero-subtitle">Software Engineering & Interactive 3D</p>
         </div>
-        <div className="scroll-indicator" style={{ position: 'absolute', bottom: '5vh', left: '50%', transform: 'translateX(-50%)' }}>
+        <div ref={indicatorRef} className="scroll-indicator" style={{ position: 'absolute', bottom: '5vh', left: '50%', transform: 'translateX(-50%)' }}>
           <span>SCROLL DOWN</span>
           <div className="mouse"><div className="wheel"></div></div>
         </div>
