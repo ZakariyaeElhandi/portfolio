@@ -274,121 +274,20 @@ function InteractiveScrollIsland({ children }) {
   return <group ref={group}>{children}</group>
 }
 
-function FloatingDecorations() {
-  const mask = useGLTF('./models/mask.glb', true)
-  const lat1 = useGLTF('./models/latern1.glb', true)
-  
-  const group = useRef()
-  useFrame((state) => {
-    group.current.children.forEach((child, i) => {
-      child.rotation.y += 0.005 * (i % 2 === 0 ? 1 : -1)
-      child.position.y += Math.sin(state.clock.elapsedTime * 0.5 + i) * 0.005
-    })
-  })
 
-  return (
-    <Scroll>
-      <group ref={group}>
-        {/* Floating Mask for Skills (Page 3). Text is right, mask on left. */}
-        <group position={[-12, -33, 8]}>
-          <Clone object={mask.scene} scale={4} rotation={[0, 0.5, -0.1]} />
-          <pointLight intensity={3} color="#ffcc00" distance={15} />
-        </group>
-        
-        {/* Floating Lanterns for Projects (Page 4). Text is left, lanterns on right. */}
-        <group position={[14, -50, 8]}>
-          <Clone object={lat1.scene} scale={4} rotation={[0.2, -0.5, 0.1]} />
-          <pointLight intensity={2} color="#ffcc00" distance={15} />
-        </group>
-      </group>
-    </Scroll>
-  )
-}
 
 function HTMLPortfolio() {
   return (
-    <Scroll html style={{ width: '100vw', height: '600vh' }}>
+    <Scroll html style={{ width: '100vw', height: '200vh' }}>
       {/* Page 1: Empty to show the 3D Island */}
       <section className="scroll-section hero-section" style={{ height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', paddingTop: '5vh' }}>
-        <div className="hero-content top-left">
+        <div className="hero-content top-left" style={{ opacity: 0.6 }}>
           <h1 className="hero-name">ZAKARIYAE EL HANDI</h1>
           <p className="hero-subtitle">Software Engineering & Interactive 3D</p>
         </div>
         <div className="scroll-indicator" style={{ position: 'absolute', bottom: '5vh', left: '50%', transform: 'translateX(-50%)' }}>
           <span>SCROLL DOWN</span>
           <div className="mouse"><div className="wheel"></div></div>
-        </div>
-      </section>
-
-      {/* Page 2: About Me */}
-      <section className="scroll-section" style={{ height: '100vh', display: 'flex', alignItems: 'center' }}>
-        <div className="content-box left">
-          <h2 className="section-title">ABOUT ME</h2>
-          <p className="section-text">
-            Full-stack-oriented engineering student combining software engineering, AI, data, enterprise systems, 3D modeling, game development, Unreal Engine, Unity, and multimedia.
-          </p>
-          <p className="section-text">
-            Interested in building interactive, visually impressive and technically ambitious digital experiences.
-          </p>
-        </div>
-      </section>
-
-      {/* Page 3: Skills (Mask is floating here) */}
-      <section className="scroll-section" style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-        <div className="content-box right">
-          <h2 className="section-title">TECHNICAL SKILLS</h2>
-          <ul className="skills-list">
-            <li><strong>Languages:</strong> JavaScript, TypeScript, Python, C#, C++, SQL, PHP</li>
-            <li><strong>Frontend:</strong> React, Next.js, React Native, Three.js, Tailwind</li>
-            <li><strong>Backend:</strong> Node.js, Express, NestJS, FastAPI, Django, PostgreSQL</li>
-            <li><strong>AI / Data:</strong> Groq API, LLaMA, Whisper, Scikit-learn, Power BI</li>
-          </ul>
-        </div>
-      </section>
-
-      {/* Page 4: Projects (Lotus floating here) */}
-      <section className="scroll-section" style={{ height: '100vh', display: 'flex', alignItems: 'center' }}>
-        <div className="content-box left">
-          <h2 className="section-title">ENTERPRISE & AI</h2>
-          <div className="project">
-            <h3 className="project-title">Smart HR Ecosystem</h3>
-            <p className="section-text">
-              A full-stack ecosystem combining Odoo ERP backend, React Native mobile apps, and Next.js SaaS analytics, integrated with LLaMA and Groq AI for automated recruitment and business intelligence.
-            </p>
-          </div>
-          <div className="project">
-            <h3 className="project-title">Darija Tourist</h3>
-            <p className="section-text">
-              AI-powered mobile application helping tourists learn Moroccan Darija with voice interaction, Whisper Speech-to-Text, and custom Animated UI.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Page 5: 3D / Games (Lanterns floating here) */}
-      <section className="scroll-section" style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-        <div className="content-box right">
-          <h2 className="section-title">3D & GAME DEV</h2>
-          <div className="project">
-            <h3 className="project-title">Echoes of the Labyrinth</h3>
-            <p className="section-text">
-              Third-person survival adventure game built in Unity and C#, featuring custom 3D environments modeled in Blender and Mixamo animations.
-            </p>
-          </div>
-          <div className="project">
-            <h3 className="project-title">Unreal Engine Samurai</h3>
-            <p className="section-text">
-              Action-combat prototype exploring Unreal Engine blueprints, animation systems, lighting, and game-ready 3D asset pipelines.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Page 6: Contact */}
-      <section className="scroll-section" style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="content-box center">
-          <h2 className="section-title huge">LET'S CONNECT</h2>
-          <a href="mailto:contact@example.com" className="contact-btn">REACH OUT</a>
         </div>
       </section>
     </Scroll>
@@ -437,7 +336,6 @@ function Scene({ isMobile }) {
         <Lanterns count={15} />
       </InteractiveScrollIsland>
 
-      <FloatingDecorations />
       <HTMLPortfolio />
 
       {/* The camera rig controls the parallax hover effect */}
@@ -591,7 +489,7 @@ export default function App() {
           <color attach="background" args={['#050505']} />
           <fog attach="fog" args={['#050505', 10, 50]} />
           <Suspense fallback={null}>
-            <ScrollControls pages={6} damping={0.25}>
+            <ScrollControls pages={2} damping={0.25}>
               <Scene isMobile={isMobile} />
             </ScrollControls>
             {!isMobile && <BakeShadows />}
