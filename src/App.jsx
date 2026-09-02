@@ -214,20 +214,60 @@ function Ocean() {
   return <water ref={ref} args={[geom, config]} rotation-x={-Math.PI / 2} position={[0, -0.45, 0]} />
 }
 
-function ScrollIsland({ children }) {
+function InteractiveScrollIsland({ children }) {
   const group = useRef()
   const scroll = useScroll()
+  const { gl } = useThree()
+  
+  // Drag state
+  const rotationY = useRef(0)
+  
+  useEffect(() => {
+    let isDragging = false
+    let previousX = 0
+    
+    const onPointerDown = (e) => {
+      isDragging = true
+      previousX = e.clientX
+      gl.domElement.style.cursor = 'grabbing'
+    }
+    const onPointerUp = () => {
+      isDragging = false
+      gl.domElement.style.cursor = 'grab'
+    }
+    const onPointerMove = (e) => {
+      if (isDragging) {
+        const deltaX = e.clientX - previousX
+        rotationY.current += deltaX * 0.005
+        previousX = e.clientX
+      }
+    }
+    
+    gl.domElement.style.cursor = 'grab'
+    gl.domElement.addEventListener('pointerdown', onPointerDown)
+    window.addEventListener('pointerup', onPointerUp)
+    window.addEventListener('pointermove', onPointerMove)
+    
+    return () => {
+      gl.domElement.removeEventListener('pointerdown', onPointerDown)
+      window.removeEventListener('pointerup', onPointerUp)
+      window.removeEventListener('pointermove', onPointerMove)
+    }
+  }, [gl])
 
   useFrame(() => {
-    // scroll.range(0, 0.15) maps scroll progress from 0->15% to 0->1
+    if (!group.current) return
     const r = scroll.range(0, 0.15) 
     
-    // Smoothly scale down and move up to act as a header
-    group.current.scale.setScalar(THREE.MathUtils.lerp(10, 4, r))
-    group.current.position.y = THREE.MathUtils.lerp(0, 8, r)
-    group.current.position.z = THREE.MathUtils.lerp(0, -10, r)
-    group.current.rotation.x = THREE.MathUtils.lerp(0, 0.3, r)
-    group.current.rotation.y = THREE.MathUtils.lerp(0, Math.PI * 0.1, r)
+    // Smoothly scale down and DROWN into the water (Y drops to -5)
+    group.current.scale.setScalar(THREE.MathUtils.lerp(10, 5, r))
+    group.current.position.y = THREE.MathUtils.lerp(0, -5, r)
+    group.current.position.z = THREE.MathUtils.lerp(0, -5, r)
+    group.current.rotation.x = THREE.MathUtils.lerp(0, 0.15, r)
+    
+    // Combine scroll rotation and interactive drag rotation
+    const scrollRotY = THREE.MathUtils.lerp(0, Math.PI * 0.1, r)
+    group.current.rotation.y = scrollRotY + rotationY.current
   })
 
   return <group ref={group}>{children}</group>
@@ -235,7 +275,6 @@ function ScrollIsland({ children }) {
 
 function FloatingDecorations() {
   const mask = useGLTF('./models/mask.glb', true)
-  const lotus = useGLTF('./models/lotus.glb', true)
   const lat1 = useGLTF('./models/latern1.glb', true)
   
   const group = useRef()
@@ -249,21 +288,15 @@ function FloatingDecorations() {
   return (
     <Scroll>
       <group ref={group}>
-        {/* Floating Mask for Skills (Page 3) */}
-        <group position={[12, -20, -5]}>
-          <Clone object={mask.scene} scale={3} rotation={[0, -0.5, 0.1]} />
+        {/* Floating Mask for Skills (Page 3). Text is right, mask on left. */}
+        <group position={[-12, -33, 8]}>
+          <Clone object={mask.scene} scale={4} rotation={[0, 0.5, -0.1]} />
           <pointLight intensity={3} color="#ffcc00" distance={15} />
         </group>
         
-        {/* Floating Lotus for Projects (Page 4) */}
-        <group position={[-15, -40, -10]}>
-          <Clone object={lotus.scene} scale={1.5} rotation={[0.2, 0.5, -0.2]} />
-          <pointLight intensity={3} color="#88ccff" distance={20} />
-        </group>
-        
-        {/* Floating Lanterns for Contact (Page 5) */}
-        <group position={[10, -60, -5]}>
-          <Clone object={lat1.scene} scale={2} rotation={[0.2, 0, 0.1]} />
+        {/* Floating Lanterns for Projects (Page 4). Text is left, lanterns on right. */}
+        <group position={[14, -50, 8]}>
+          <Clone object={lat1.scene} scale={4} rotation={[0.2, -0.5, 0.1]} />
           <pointLight intensity={2} color="#ffcc00" distance={15} />
         </group>
       </group>
@@ -275,12 +308,12 @@ function HTMLPortfolio() {
   return (
     <Scroll html style={{ width: '100vw', height: '600vh' }}>
       {/* Page 1: Empty to show the 3D Island */}
-      <section className="scroll-section hero-section" style={{ height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', paddingBottom: '10vh' }}>
-        <div className="hero-content">
+      <section className="scroll-section hero-section" style={{ height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', paddingTop: '5vh' }}>
+        <div className="hero-content top-left">
           <h1 className="hero-name">ZAKARIYAE EL HANDI</h1>
           <p className="hero-subtitle">Software Engineering & Interactive 3D</p>
         </div>
-        <div className="scroll-indicator">
+        <div className="scroll-indicator" style={{ position: 'absolute', bottom: '5vh', left: '50%', transform: 'translateX(-50%)' }}>
           <span>SCROLL DOWN</span>
           <div className="mouse"><div className="wheel"></div></div>
         </div>
@@ -396,12 +429,12 @@ function Scene({ isMobile }) {
   
   return (
     <>
-      {/* We wrap the island, lotuses, and lanterns in the ScrollIsland so they shrink and move as a header */}
-      <ScrollIsland>
+      {/* We wrap the island, lotuses, and lanterns in the InteractiveScrollIsland so they sink into water and can be dragged */}
+      <InteractiveScrollIsland>
         <primitive object={scene} />
         <Lotuses count={25} />
         <Lanterns count={15} />
-      </ScrollIsland>
+      </InteractiveScrollIsland>
 
       <FloatingDecorations />
       <HTMLPortfolio />
