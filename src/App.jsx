@@ -300,14 +300,16 @@ function HTMLPortfolio() {
   return (
     <Scroll html style={{ width: '100vw', height: '200vh', pointerEvents: 'none' }}>
       {/* Page 1: Empty to show the 3D Island */}
-      <section className="scroll-section hero-section" style={{ height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', paddingTop: '5vh' }}>
-        <div className="hero-content top-left" style={{ opacity: 0.6, userSelect: 'none' }}>
+      <section className="scroll-section hero-section" style={{ height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', paddingTop: '20vh' }}>
+        <div className="hero-content" style={{ userSelect: 'none', textAlign: 'center' }}>
           <h1 className="hero-name">ZAKARIYAE EL HANDI</h1>
           <p className="hero-subtitle">Software Engineering & Interactive 3D</p>
         </div>
-        <div ref={indicatorRef} className="scroll-indicator" style={{ position: 'absolute', bottom: '5vh', left: '50%', transform: 'translateX(-50%)' }}>
-          <span>SCROLL DOWN</span>
-          <div className="mouse"><div className="wheel"></div></div>
+        <div ref={indicatorRef}>
+          <div className="scroll-indicator" style={{ position: 'absolute', bottom: '5vh', left: '50%', transform: 'translateX(-50%)' }}>
+            <span>SCROLL DOWN</span>
+            <div className="mouse"><div className="wheel"></div></div>
+          </div>
         </div>
       </section>
     </Scroll>

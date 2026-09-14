@@ -205,18 +205,12 @@ body {
 
 .hero-name {
   font-family: 'Uncial Antiqua', serif;
-  font-size: clamp(2rem, 5vw, 4rem);
+  font-size: clamp(3rem, 8vw, 6rem);
   color: #ffcc00;
   margin: 0;
   line-height: 1.1;
   text-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
-}
-
-.top-left {
-  position: absolute;
-  top: 5vh;
-  left: 5vw;
-  text-align: left;
+  text-align: center;
 }
 
 .hero-subtitle {
@@ -226,6 +220,7 @@ body {
   letter-spacing: 2px;
   margin-top: 10px;
   text-transform: uppercase;
+  text-align: center;
 }
 
 .scroll-indicator {
